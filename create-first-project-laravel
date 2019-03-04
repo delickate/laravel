@@ -1,0 +1,15 @@
+//SANI: If you are working on xampp/wamp etc... and already have installed composer 
+//      then go to your root folder and run following command.
+//      I am working in xampp and have created a folder laravel and i want to create new project name 
+//      loginme inside this laravel folder
+
+//SANI: Open command prompt and go to your folder path. In my case path is c:\xampp\htdocs\laravel
+//      Running following command.
+
+// c:\xampp\htdocs\laravel> composer create-project laravel/laravel loginme --prefer-dist
+
+//SANI: You are done. Now open browser have navigate to your laravel project. In my case I am going to open following URL
+
+// http://localhost/laravel/loginms/public/
+
+//SANI: You'll se welcome page from laravel.
