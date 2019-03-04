@@ -1,0 +1,44 @@
+//SANI: If you want to create custom session in controller and want to get in view you should follow following steps
+
+#//SANI: Step 1: Include session module in controller 
+
+//SANI: To get session in controller
+ use App\Http\Controllers\Controller;
+
+#//SANI: Step 2: Change your method 
+ From public function index() to public function index(Request $request)
+
+#//SANI: Step 3: Create session inside method
+
+public function index(Request $request)
+    {
+        $request->session()->put('custom_session', 'This is my custom session value');
+        return view('home');
+    }
+    
+#//SANI: Step 4: Store session into variable
+
+public function index(Request $request)
+    {
+        $request->session()->put('custom_session', 'This is my custom session value');
+        $custom_session = $request->session()->get('custom_session');
+
+        return view('home');
+    }
+    
+#//SANI: Step 4: Pass variable to view
+public function index(Request $request)
+    {
+        $request->session()->put('custom_session', 'This is my custom session value');
+        $custom_session = $request->session()->get('custom_session');
+
+        $data = array("alldata" => $request->session(),
+                      "sani"   => "hyne",
+                      "custom_session" => $custom_session
+
+                     );
+        return view('home', $data);
+    }
+    
+ #//SANI: Step 5: Show variable value in view
+ <p>{{ $custom_session }}</p>
