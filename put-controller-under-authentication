@@ -1,0 +1,7 @@
+//Controller should to valid login. Or Only logined user should be allow to access specific controller.
+// Open controller file and in constructor add this line
+
+public function __construct()
+    {
+        $this->middleware('auth');
+}
