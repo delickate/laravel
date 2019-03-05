@@ -1,0 +1,46 @@
+//SANI:Change user registration password encryption to md5 in laravel
+
+//SANI: Step 1: Open user registration file. In my case, path is
+//              c:\xampp\htdocs\laravel\loginme\app\Http:\Controllers\Auth\RegisterController.php
+//              and update following function
+
+protected function create(array $data)
+    {
+
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+           // 'password' => Hash::make($data['password']),
+             'password' => md5($data['password'])
+        ]);
+    }
+    
+
+
+//SANI: Step 1: Over write login attempt method. In my case, path is
+//              C:\xampp\htdocs\laravel\loginme\app\Controllers\Auth\LoginController.php
+//  Import following file
+# use Illuminate\Http\Request; //SANI: To override login function
+//  and add following function
+
+//SANI: Override login function
+    protected function attemptLogin(Request $request)
+    {
+        $user = \App\User::where([
+            'email' => $request->email,
+            'password' => md5($request->password) //SANI: MD5 encryption
+        ])->first();
+        
+        if ($user) {
+            $this->guard()->login($user, $request->has('remember'));
+            $request->session()->put('custom_session_2', $user); //SANI: Store all user info into session
+            
+            return true;
+        }
+
+        return false;
+    }
+
+
+
+   
