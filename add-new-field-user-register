@@ -1,0 +1,64 @@
+//SANI: Adding a new field to user for registration, login and store all user data into session
+
+//SANI: Step 1: Create new field in database user table.
+//              Let's suppose i want to create user_type filed.
+# ALTER TABLE `users` ADD `user_type` INT NOT NULL DEFAULT '1' AFTER `user_role`;
+
+//SANI: Step 2: Add field in migration. In my case, My migration file path is
+//              c:\xampp\htdocs\loginme\database\migration\**_creat_user_table.php
+//              and update the following function
+public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->string('user_type');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+ 
+//SANI: Step 3: Add user type dropdown in registration view page. In my case, My migration file path is
+//              c:\xampp\htdocs\loginme\resource\view\auth\register.blade.php
+//              and update the following function   
+
+<div class="form-group row">
+                            <label for="user-type" class="col-md-4 col-form-label text-md-right">{{ __('User Type') }}</label>
+
+                            <div class="col-md-6">
+                                <select name="user_type" id="user-type" class="form-control">
+                                    <option value="1">Super admin</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">District</option>
+                                </select>
+                                
+                            </div>
+                        </div>
+                        
+//SANI: Step 4: Add field in registration controller page. In my case, My migration file path is
+//              c:\xampp\htdocs\loginme\app/Http/Controllers/Auth/RegisterController.php
+//              and update the following function   
+
+    protected function create(array $data)
+    {
+
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'user_role' => $data['user_type'],
+        ]);
+    }
+    
+//SANI: Step 5: Add field in user modal page. In my case, My migration file path is
+//              c:\xampp\htdocs\loginme\app/User.php
+//              and update the following code
+
+protected $fillable = [
+        'name', 'email', 'password', 'user_type'
+    ];
+    
+    
