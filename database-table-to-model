@@ -1,0 +1,27 @@
+//SANI: How to create model by database table.
+
+//SANI: Step 1: Download/install library
+C:\xampp\htdocs\laravel\loginms> composer require reliese/laravel
+
+//SANI: Step 2: Add the service provider in file config/app.php 
+
+'providers' => [
+   ...
+    Reliese\Coders\CodersServiceProvider::class,
+],
+
+//SANI: Step 3: Add the models.php configuration file to your config directory
+
+C:\xampp\htdocs\laravel\loginms> php artisan vendor:publish --tag=reliese-models
+
+//SANI: 4: clear the config cache
+
+C:\xampp\htdocs\laravel\loginms> php artisan config:clear
+
+//SANI: Step 5: Create Model 
+
+// Create all table model
+C:\xampp\htdocs\laravel\loginms> php artisan code:models
+
+// Create model for single table
+C:\xampp\htdocs\laravel\loginms> php artisan code:models --table=tbl_profile
