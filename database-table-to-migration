@@ -1,0 +1,11 @@
+//SANI: How to create migration from database table
+
+//SANI: Step 1:  install/Download module
+composer require --dev "xethron/migrations-generator"
+
+//SANI: Step 2: Use it
+C:\xampp\htdocs\laravel\loginms>php artisan migrate:generate tbl_sectionrights
+
+OR 
+
+C:\xampp\htdocs\laravel\loginms>php artisan migrate:generate tbl_sectionrights, table2, table3
