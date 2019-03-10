@@ -1,0 +1,103 @@
+//SANI:Want to change default database users table to custom table. I am going to change users to tbl_users
+
+//SANI:Step 1: Change table name in migration file
+
+if (!Schema::hasTable('tbl_users')) 
+        {
+           
+            Schema::create('tbl_users', function (Blueprint $table) {
+                $table->bigIncrements('usr_id',128);
+                $table->string('usr_name',128);
+                $table->string('usr_email',128)->unique();
+                $table->timestamp('usr_email_verified_at')->nullable();
+                $table->string('usr_password',128);
+                $table->string('usr_rol_idfk',128);
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
+        
+//SANI: Step 2: configure users table in PROJECT_NAME\config\auth.php at end of file.
+.....
+'table' => 'tbl_users',
+....
+
+//SANI: Step 4: Execute Migration
+C:\xampp\htdocs\laravel\testing>php artisan migrate
+
+//SANI: Step 5: Modify authentication controller
+
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
+class RegisterController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'usr_name' => ['required', 'string', 'max:255'],
+            'usr_email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users'],
+            'usr_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'usr_name' => $data['name'],
+            'usr_email' => $data['email'],
+            'usr_password' => Hash::make($data['password']),
+        ]);
+    }
+}
+
+
