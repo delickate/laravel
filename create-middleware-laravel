@@ -1,0 +1,100 @@
+//SANI: How to create middleware laravel
+
+//SANI: Step 1: Create middleware using command
+> php artisan make:middleware CheckAge
+
+//SANI: Step 2: Configure middleware in kernal file (c:\xampp\htdocs\laraveltesting\app\http\kernel.php)
+
+protected $routeMiddleware = [
+.......
+'permission' => \App\Http\Middleware\checkPermission::class,
+........
+
+it has registered with alias permission name.
+
+//SANI: Step 3: Update permission middleware
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Auth;
+use Closure;
+
+use Route;
+use Request;
+use DB;
+
+class checkPermission
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        DB::enableQueryLog();
+
+       //SANI: Check if user is logged-in
+       if(Auth::user())
+       {
+         $user = Auth::user();
+         
+         if ($user) 
+         {
+            ///////////// URL ////////////////////
+            Route::currentRouteAction(); 
+            $uri_segments = Request::segments();
+            $uri_string   = "";
+            $loop_index   = 1;
+
+            foreach($uri_segments as $uri)
+            {
+                $uri_string .= $uri; 
+
+                if($loop_index != 1)
+                {
+                    $uri_string .= "/"; 
+                } 
+
+                $loop_index++;
+            }
+
+            ///////////////////////////////////////
+
+            /////////// PAGE ACCESS ///////////////
+            $navigation = \App\Models\TblSectionright::select('tbl_sectionrights.srt_sec_id as section_id', 'tbl_sections.sec_controller as controller', 'tbl_sections.sec_fake_url as fake_url', 'tbl_sections.sec_route_name as route_name')
+                ->selectRaw('GROUP_CONCAT(rit_title) as rights')
+                ->join('tbl_sections', 'tbl_sectionrights.srt_sec_id', '=', 'tbl_sections.sec_id') 
+                ->join('tbl_rights', 'tbl_sectionrights.srt_rit_id', '=', 'tbl_rights.rit_id')    
+                ->where(
+                [
+                   ['tbl_sectionrights.srt_role_id' , '=', $user["usr_rol_id"]],
+                   ['tbl_sections.sec_route_name' , '=', $uri_string]
+                ])
+                ->groupBy('tbl_sectionrights.srt_sec_id', 'tbl_sections.sec_controller', 'tbl_sections.sec_fake_url', 'tbl_sections.sec_route_name')
+                ->get();
+
+
+
+
+               if (!$navigation)
+               {
+                     return redirect('/error');
+                    //return response('Unauthorized.', 401);
+               } 
+        }else{
+                return redirect('/error');
+                //return response('Unauthorized.', 401);
+             }
+            ////////////////////////////////////////////////////
+            
+       }
+
+       
+        return $next($request);
+    }
+}
