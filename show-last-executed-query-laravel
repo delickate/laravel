@@ -1,0 +1,13 @@
+How to check last executed query in laravel
+
+//SANI: Step 1: import library
+
+use DB;
+
+//SANI: Step 2: enable in constructor
+
+DB::enableQueryLog();
+
+//SANI: Step 3: Show last executed query
+
+dd(DB::getQueryLog());
