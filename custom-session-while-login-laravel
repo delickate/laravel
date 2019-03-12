@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request; //SANI: To override login function
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Hash;
+
+class LoginController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Login Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles authenticating users for the application and
+    | redirecting them to your home screen. The controller uses a trait
+    | to conveniently provide its functionality to your applications.
+    |
+    */
+
+    use AuthenticatesUsers;
+
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
+    //SANI: Overloading login attempt
+    protected function attemptLogin(Request $request)
+    {
+        $user = \App\User::where([
+            'usr_email' => $request->email,
+            //'password' => md5($request->password)
+            //'usr_password' => Hash::check($request->password)
+        ])->get();
+        
+        if (is_array($user) || is_object($user)) 
+        {
+            foreach($user as $usr)
+            {
+              
+        if(Hash::check($request->password, $usr["usr_password"]))
+        {
+            $this->guard()->login($usr, $request->has('remember'));
+            
+            //SANI: Creating custom sessions for login user
+            $request->session()->put('loginid', $usr["usr_id"]);
+            $request->session()->put('roleid', $usr["usr_rol_id"]);
+
+            //SANI: Creating custom session for navigation
+            if(isset($usr["usr_rol_id"]) && $usr["usr_rol_id"] > 0)
+            {
+                //SANI: Getting navigation
+                $navigation = \App\Models\TblSectionright::select('tbl_sectionrights.srt_sec_id as section_id', 'tbl_sections.sec_controller as controller', 'tbl_sections.sec_fake_url as fake_url', 'tbl_sections.sec_route_name as route_name')
+                ->selectRaw('GROUP_CONCAT(rit_title) as rights')
+                ->join('tbl_sections', 'tbl_sectionrights.srt_sec_id', '=', 'tbl_sections.sec_id') 
+                ->join('tbl_rights', 'tbl_sectionrights.srt_rit_id', '=', 'tbl_rights.rit_id')    
+                ->where([
+                    'tbl_sectionrights.srt_role_id' => $usr["usr_rol_id"],
+                ])
+                ->groupBy('tbl_sectionrights.srt_sec_id', 'tbl_sections.sec_controller', 'tbl_sections.sec_fake_url', 'tbl_sections.sec_route_name')
+                ->get();
+                
+                if ($navigation) 
+                {
+                    $navigation_array = array();
+                    foreach ($navigation as $navkey => $navvalue) 
+                    {   
+                        $navigation_array[] = (array)json_decode($navvalue);
+                    }
+//dd($navigation_array);
+                    $request->session()->put('navigation', $navigation_array);
+                }    
+            }
+
+            ////////////////////////////////
+            
+            return true;
+
+        }
+
+    }
+
+    }
+
+        return false;
+    }
+}
