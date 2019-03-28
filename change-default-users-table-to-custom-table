@@ -159,6 +159,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
+
 class LoginController extends Controller
 {
     /*
@@ -189,17 +190,21 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+       
     }
 
     protected function attemptLogin(Request $request)
     {
 
+
         $user = \App\User::where([
             'usr_email' => $request->email,
-            'usr_password' => Hash::make($request->password)
+            'usr_password' => Hash::check('usr_password', $request->password)
         ])->first();
-        
-        if ($user) {
+
+       
+        if ($user) 
+            {  
             $this->guard()->login($user, $request->has('remember'));
             
             return true;
@@ -215,99 +220,3 @@ class LoginController extends Controller
 
 
 }
-
-
-#SANI: Step 8 : User model
-
-<?php
-
-namespace App;
-
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-
-
-class User extends Authenticatable
-{
-    use Notifiable;
-
-    protected $table        = 'tbl_users';
-    protected $primaryKey   = 'usr_id';
-    protected $softDelete   = true;
-
-    const CREATED_AT = 'usr_created_at';
-    const UPDATED_AT = 'usr_updated_at';
-    const DELETED_AT = 'usr_deleted_at';
-
-
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'usr_name', 'usr_email', 'usr_password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'usr_password', 'usr_remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'usr_email_verified_at' => 'datetime',
-    ];
-
-
-
-
-    //SANI: Change password field to usr_password
-    public function getAuthPassword()
-    {
-        return $this->usr_password;
-    }
-
-    public function getReminderEmail()
-    {
-        return $this->usr_mail;
-    }
-
-    function getEmailAttribute() {
-        return $this->attributes['usr_email'];
-    }
-
-    function setEmailAttribute($value) {
-        return $this->attributes['usr_email']=$value;
-    }
-
-
-    function getNameAttribute() {
-        return $this->attributes['usr_name'];
-    }
-
-    function setNameAttribute($value) {
-        return $this->attributes['usr_name']=$value;
-    }
-
-    function getPasswordAttribute() {
-        return $this->attributes['usr_password'];
-    }
-
-    function setPasswordAttribute($value) {
-        return $this->attributes['usr_password']=$value;
-    }
-}
-
-
