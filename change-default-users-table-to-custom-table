@@ -2,19 +2,28 @@
 
 //SANI:Step 1: Change table name in migration file
 
-if (!Schema::hasTable('tbl_users')) 
+Schema::defaultStringLength(191);
+        if(!Schema::hasTable('tbl_users'))
         {
-           
-            Schema::create('tbl_users', function (Blueprint $table) {
-                $table->bigIncrements('usr_id',128);
-                $table->string('usr_name',128);
-                $table->string('usr_email',128)->unique();
-                $table->timestamp('usr_email_verified_at')->nullable();
-                $table->string('usr_password',128);
-                $table->string('usr_rol_idfk',128);
-                $table->rememberToken();
-                $table->timestamps();
-            });
+         Schema::create('tbl_users', function (Blueprint $table) {
+            $table->bigIncrements('usr_id');
+            $table->string('usr_name')->default("Name");
+            $table->string('usr_email')->unique();
+            $table->timestamp('usr_email_verified_at')->nullable();
+            $table->string('usr_password')->default("12345678");
+            $table->integer('usr_phone')->default("0");
+            $table->string('usr_image')->default("default.jpg");
+            $table->integer('usr_created_by')->default(0);
+            $table->timestamp('usr_created_at')->nullable();
+            $table->integer('usr_updated_by')->default(0);
+            $table->timestamp('usr_updated_at')->nullable();
+            $table->integer('usr_deleted_by')->default(0);
+            $table->timestamp('usr_deleted_at')->nullable();
+            $table->tinyInteger('usr_status')->default(1);
+            $table->integer('usr_sortid')->default(1);
+            $table->rememberToken();
+            $table->timestamps();
+         });
         }
         
 //SANI: Step 2: configure users table in PROJECT_NAME\config\auth.php at end of file.
@@ -36,6 +45,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+//use DB;
 
 class RegisterController extends Controller
 {
@@ -67,6 +77,7 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+       // DB::enableQueryLog();
     }
 
     /**
@@ -77,11 +88,20 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $mapping  = array('usr_name'     => $data['name'],
+                          'usr_email'    => $data['email'],
+                          'usr_password' => $data['password'],
+                          'password_confirmation' => $data['password_confirmation']
+                         );
+
+        $is_validated = Validator::make($mapping, [
             'usr_name' => ['required', 'string', 'max:255'],
             'usr_email' => ['required', 'string', 'email', 'max:255', 'unique:tbl_users'],
-            'usr_password' => ['required', 'string', 'min:8', 'confirmed'],
+            'usr_password' => ['required', 'string', 'min:8','same:password_confirmation']
         ]);
+
+       
+        return $is_validated;
     }
 
     /**
@@ -92,12 +112,19 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+
+        $create_user = User::create([
             'usr_name' => $data['name'],
             'usr_email' => $data['email'],
             'usr_password' => Hash::make($data['password']),
         ]);
-    }
-}
 
+       // dd(DB::getQueryLog());
+
+        return $create_user;
+    }
+
+
+    
+}
 
