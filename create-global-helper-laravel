@@ -1,0 +1,18 @@
+
+#SANI: How to create  global helper
+
+#SANI: Step 1: Download library
+
+C:\wamp64\www\Laravel\testing> composer require browner12/helpers
+
+#SANI: Step 2: register library in (config/app.php)
+
+'providers' => [
+...........
+browner12\helpers\HelperServiceProvider::class,
+...........
+]
+
+#SANI: Step 3: Create helper
+
+C:\wamp64\www\Laravel\testing> php artisan make:helper global_helper
