@@ -1,7 +1,7 @@
 //SANI: How to create middleware laravel
 
 //SANI: Step 1: Create middleware using command
-> php artisan make:middleware Permissions
+> php artisan make:middleware checkPermission
 
 //SANI: Step 2: Configure middleware in kernal file (c:\xampp\htdocs\laraveltesting\app\http\kernel.php)
 
