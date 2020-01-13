@@ -1,0 +1,19 @@
+Authentication:
+=================
+Step 1: use default authentication laravel
+==========================================
+> php artisan make:auth
+
+Step 2: Run migration
+==========================================
+> php artisan migrate
+
+Step 3: Update route
+==========================================
+To:
+===
+Route::get('/', 'HomeController@index');
+
+From:
+=====
+//Route::get('/home', 'HomeController@index')->name('home');
