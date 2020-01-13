@@ -1,0 +1,28 @@
+Step 1: Create a controller
+=============================
+> php artisan make:controller -- resource testing
+
+Step 2: Update route file (c:\wamp64\www\Laravel\test\routes\web.php)
+=============================
+//SANI Route::get('/FakeController/FakeMethod','OriginalController@OringinalMethod')
+//Route::get('/testingController/index','testing@index');
+Route::get('/testingController/index/{id?}','testing@index'); //SANI: Optional ID
+
+Step 3: three Update controller function
+=========================================
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class testing extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        echo "Sani Hyne: ".$request->id;
+    }
+}
