@@ -12,6 +12,63 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
     	//SANI: Execution (php artisan db:seed)
+    	if(DB::table('tbl_rights')->get()->count() == 0)
+        {
+        	//DB::table('tbl_rights')->truncate();
+
+        	$rights = [
+        				['rit_id' 					=> 1, 
+        				 'rit_name' 				=> 'View', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 2, 
+        				 'rit_name' 				=> 'Add', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 3, 
+        				 'rit_name' 				=> 'Edit', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 4, 
+        				 'rit_name' 				=> 'Delete', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 5, 
+        				 'rit_name' 				=> 'Print', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ],
+        			    ['rit_id' 					=> 6, 
+        				 'rit_name' 				=> 'Export', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ],
+        			    ['rit_id' 					=> 7, 
+        				 'rit_name' 				=> 'Verify', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ]
+        			 ];    
+
+        	DB::table('tbl_rights')->insert($rights);
+        }	
+
+    	if(DB::table('tbl_roles')->get()->count() == 0)
+        {
+        	//DB::table('tbl_roles')->truncate();
+
+        	$roles = [
+        				['rol_id' 					=> 1, 
+        				 'rol_name' 				=> 'Superadmin', 
+        				 'rol_is_mandatory'			=> 1 
+        			    ],
+        			    ['rol_id' 					=> 2, 
+        				 'rol_name' 				=> 'Admin', 
+        				 'rol_is_mandatory'			=> 0 
+        			    ]
+        			 ];    
+
+        	DB::table('tbl_roles')->insert($roles);
+        }	
+
+
     	if(DB::table('tbl_sections')->get()->count() == 0)
         {
         	//DB::table('tbl_roles')->truncate();
@@ -78,63 +135,7 @@ class DatabaseSeeder extends Seeder
         	DB::table('tbl_sections')->insert($sections);
         }	
 
-    	if(DB::table('tbl_rights')->get()->count() == 0)
-        {
-        	//DB::table('tbl_rights')->truncate();
-
-        	$rights = [
-        				['rit_id' 					=> 1, 
-        				 'rit_name' 				=> 'View', 
-        				 'rit_is_mandatory'			=> 1 
-        			    ],
-        			    ['rit_id' 					=> 2, 
-        				 'rit_name' 				=> 'Add', 
-        				 'rit_is_mandatory'			=> 1 
-        			    ],
-        			    ['rit_id' 					=> 3, 
-        				 'rit_name' 				=> 'Edit', 
-        				 'rit_is_mandatory'			=> 1 
-        			    ],
-        			    ['rit_id' 					=> 4, 
-        				 'rit_name' 				=> 'Delete', 
-        				 'rit_is_mandatory'			=> 1 
-        			    ],
-        			    ['rit_id' 					=> 5, 
-        				 'rit_name' 				=> 'Print', 
-        				 'rit_is_mandatory'			=> 0 
-        			    ],
-        			    ['rit_id' 					=> 6, 
-        				 'rit_name' 				=> 'Export', 
-        				 'rit_is_mandatory'			=> 0 
-        			    ],
-        			    ['rit_id' 					=> 7, 
-        				 'rit_name' 				=> 'Verify', 
-        				 'rit_is_mandatory'			=> 0 
-        			    ]
-        			 ];    
-
-        	DB::table('tbl_rights')->insert($rights);
-        }	
-
-    	if(DB::table('tbl_roles')->get()->count() == 0)
-        {
-        	//DB::table('tbl_roles')->truncate();
-
-        	$roles = [
-        				['rol_id' 					=> 1, 
-        				 'rol_name' 				=> 'Superadmin', 
-        				 'rol_is_mandatory'			=> 1 
-        			    ],
-        			    ['rol_id' 					=> 2, 
-        				 'rol_name' 				=> 'Admin', 
-        				 'rol_is_mandatory'			=> 0 
-        			    ]
-        			 ];    
-
-        	DB::table('tbl_roles')->insert($roles);
-        }	
-
-
+    	
         if(DB::table('tbl_users')->get()->count() == 0)
         {
         	//DB::table('tbl_users')->truncate();
