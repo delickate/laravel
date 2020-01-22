@@ -40,19 +40,29 @@ class CreateUsersTable extends Migration
                 
                 $table->engine = 'InnoDB';
             });
+
+            DB::unprepared('CREATE TRIGGER `add_admin_permissions` AFTER INSERT ON `tbl_sections`
+                             FOR EACH ROW BEGIN
+
+                            INSERT INTO tbl_role_rights(rrt_rol_idfk,rrt_sec_idfk,rrt_rit_idfk)
+                            SELECT 1,  NEW.sec_id, rit_id 
+                            FROM tbl_rights;
+
+                            END
+        ');
         }
 
 /*
 DELIMITERS !!
-CREATE TRIGGER `add_admin_permissions` AFTER INSERT ON `tbl_sections`
- FOR EACH ROW BEGIN
+                            CREATE TRIGGER `add_admin_permissions` AFTER INSERT ON `tbl_sections`
+                             FOR EACH ROW BEGIN
 
-INSERT INTO tbl_role_rights(rrt_rol_idfk,rrt_sec_idfk,rrt_rit_idfk)
-SELECT 1,  NEW.sec_id, rit_id 
-FROM tbl_rights;
+                            INSERT INTO tbl_role_rights(rrt_rol_idfk,rrt_sec_idfk,rrt_rit_idfk)
+                            SELECT 1,  NEW.sec_id, rit_id 
+                            FROM tbl_rights;
 
-END
-*/ 
+                            END
+*/
 
         //SANI: Create table tbl_rights
         if(!Schema::hasTable('tbl_rights'))
@@ -150,6 +160,7 @@ END
     {
         
         //SANI: Roll back using (php artisan migrate:rollback)
+        DB::unprepared('DROP TRIGGER `add_admin_permissions`');
         Schema::dropIfExists('tbl_role_rights');
         Schema::dropIfExists('tbl_users');
         //Schema::dropIfExists('migrations');
