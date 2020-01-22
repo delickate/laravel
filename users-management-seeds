@@ -1,0 +1,196 @@
+<?php
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+    	//SANI: Execution (php artisan db:seed)
+    	if(DB::table('tbl_sections')->get()->count() == 0)
+        {
+        	//DB::table('tbl_roles')->truncate();
+
+        	$sections = [
+        				['sec_id' 					=> 1, 
+        				 'sec_parent_idfk' 			=> 0, 
+        				 'sec_name'					=> "Configurations", 
+        				 'sec_controller'			=> null, 
+        				 'sec_fakename'				=> null, 
+        				 'sec_url'					=> null,
+        				 'sec_icon'					=> "fa fa-list",
+        				 'sec_image'				=> "config.jpg",
+        				 'sec_status'				=> 1,
+        				 'sec_sortid'				=> 1, 
+        			    ],
+        			    ['sec_id' 					=> 2, 
+        				 'sec_parent_idfk' 			=> 1, 
+        				 'sec_name'					=> "Users", 
+        				 'sec_controller'			=> "Users", 
+        				 'sec_fakename'				=> "Users", 
+        				 'sec_url'					=> "Users",
+        				 'sec_icon'					=> "fa fa-list",
+        				 'sec_image'				=> "users.jpg",
+        				 'sec_status'				=> 1,
+        				 'sec_sortid'				=> 2, 
+        			    ],
+        			    ['sec_id' 					=> 3, 
+        				 'sec_parent_idfk' 			=> 1, 
+        				 'sec_name'					=> "Rights", 
+        				 'sec_controller'			=> "Rights", 
+        				 'sec_fakename'				=> "Rights", 
+        				 'sec_url'					=> "Rights",
+        				 'sec_icon'					=> "fa fa-list",
+        				 'sec_image'				=> "rights.jpg",
+        				 'sec_status'				=> 1,
+        				 'sec_sortid'				=> 3, 
+        			    ],
+        			    ['sec_id' 					=> 4, 
+        				 'sec_parent_idfk' 			=> 1, 
+        				 'sec_name'					=> "Roles", 
+        				 'sec_controller'			=> "Roles", 
+        				 'sec_fakename'				=> "Roles", 
+        				 'sec_url'					=> "Roles",
+        				 'sec_icon'					=> "fa fa-list",
+        				 'sec_image'				=> "roles.jpg",
+        				 'sec_status'				=> 1,
+        				 'sec_sortid'				=> 4, 
+        			    ],
+        			    
+        			    ['sec_id' 					=> 5, 
+        				 'sec_parent_idfk' 			=> 1, 
+        				 'sec_name'					=> "Sections", 
+        				 'sec_controller'			=> "Sections", 
+        				 'sec_fakename'				=> "Sections", 
+        				 'sec_url'					=> "Sections",
+        				 'sec_icon'					=> "fa fa-list",
+        				 'sec_image'				=> "sections.jpg",
+        				 'sec_status'				=> 1,
+        				 'sec_sortid'				=> 5, 
+        			    ]
+        			 ];    
+
+        	DB::table('tbl_sections')->insert($sections);
+        }	
+
+    	if(DB::table('tbl_rights')->get()->count() == 0)
+        {
+        	//DB::table('tbl_rights')->truncate();
+
+        	$rights = [
+        				['rit_id' 					=> 1, 
+        				 'rit_name' 				=> 'View', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 2, 
+        				 'rit_name' 				=> 'Add', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 3, 
+        				 'rit_name' 				=> 'Edit', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 4, 
+        				 'rit_name' 				=> 'Delete', 
+        				 'rit_is_mandatory'			=> 1 
+        			    ],
+        			    ['rit_id' 					=> 5, 
+        				 'rit_name' 				=> 'Print', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ],
+        			    ['rit_id' 					=> 6, 
+        				 'rit_name' 				=> 'Export', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ],
+        			    ['rit_id' 					=> 7, 
+        				 'rit_name' 				=> 'Verify', 
+        				 'rit_is_mandatory'			=> 0 
+        			    ]
+        			 ];    
+
+        	DB::table('tbl_rights')->insert($rights);
+        }	
+
+    	if(DB::table('tbl_roles')->get()->count() == 0)
+        {
+        	//DB::table('tbl_roles')->truncate();
+
+        	$roles = [
+        				['rol_id' 					=> 1, 
+        				 'rol_name' 				=> 'Superadmin', 
+        				 'rol_is_mandatory'			=> 1 
+        			    ],
+        			    ['rol_id' 					=> 2, 
+        				 'rol_name' 				=> 'Admin', 
+        				 'rol_is_mandatory'			=> 0 
+        			    ]
+        			 ];    
+
+        	DB::table('tbl_roles')->insert($roles);
+        }	
+
+
+        if(DB::table('tbl_users')->get()->count() == 0)
+        {
+        	//DB::table('tbl_users')->truncate();
+
+        	$users = [
+        				['usr_id' 					=> 1, 
+        				 'usr_name' 				=> 'Superadmin', 
+        				 'usr_email' 				=> 'sani@hotmail.com', 
+        				 'usr_email_verified_at' 	=> null, 
+        				 'usr_password'				=> bcrypt('12345678'),
+        				 'usr_phone' 				=> 0, 
+        				 'usr_image' 				=> 'default.jpg', 
+        				 'usr_created_by'			=> 1, 
+        				 'usr_created_at'			=> date("Y-m-d H:i:s"), 
+        				 'usr_updated_by'			=> 0, 
+        				 'usr_updated_at'			=> null, 
+        				 'usr_deleted_by'			=> 0, 
+        				 'usr_deleted_at'			=> null, 
+        				 'usr_status' 				=> 1,
+        				 'usr_sortid'               => 1,
+        				 'remember_token'			=> null,
+        				 'urs_rol_idfk'				=> 1,
+        				 'usr_is_mandatory'			=> 1 
+        			    ],
+        			    ['usr_id' 					=> 2, 
+        				 'usr_name' 				=> 'Admin', 
+        				 'usr_email' 				=> 'hyne@hotmail.com', 
+        				 'usr_email_verified_at' 	=> null, 
+        				 'usr_password'				=> md5('12345678'),
+        				 'usr_phone' 				=> 0, 
+        				 'usr_image' 				=> 'default.jpg', 
+        				 'usr_created_by'			=> 1, 
+        				 'usr_created_at'			=> date("Y-m-d H:i:s"), 
+        				 'usr_updated_by'			=> 0, 
+        				 'usr_updated_at'			=> null, 
+        				 'usr_deleted_by'			=> 0, 
+        				 'usr_deleted_at'			=> null, 
+        				 'usr_status' 				=> 1,
+        				 'usr_sortid'               => 2,
+        				 'remember_token'			=> null,
+        				 'urs_rol_idfk'				=> 2,
+        				 'usr_is_mandatory'			=> 0 
+        			    ]
+        			];
+
+        			DB::table('tbl_users')->insert($users);
+
+        }
+
+
+        
+
+
+
+        
+
+    }
+}
+?>
