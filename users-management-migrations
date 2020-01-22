@@ -1,0 +1,160 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateUsersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        //SANI: Execution (php artisan migrate:fresh)
+        Schema::defaultStringLength(255);
+
+        
+
+        //SANI: Create table tbl_sections
+         if(!Schema::hasTable('tbl_sections'))
+        {
+            Schema::create('tbl_sections', function(Blueprint $table)
+            {
+                $table->integer('sec_id', true);
+                $table->integer('sec_parent_idfk')->index('sec_parent_idfk');
+                $table->string('sec_name')->nullable();
+                $table->string('sec_controller')->nullable();
+                $table->string('sec_fakename')->nullable();
+                $table->string('sec_url')->nullable();
+                $table->string('sec_icon')->nullable();
+                $table->string('sec_image')->nullable();
+                $table->boolean('sec_status')->default(0);
+                $table->integer('sec_sortid')->default(1);
+                $table->boolean('sec_is_mandatory')->default(0);
+                $table->timestamp('sec_created_at')->nullable();
+                $table->timestamp('sec_updated_at')->nullable();
+                $table->timestamp('sec_deleted_at')->nullable();
+                
+                $table->engine = 'InnoDB';
+            });
+        }
+
+/*
+DELIMITERS !!
+CREATE TRIGGER `add_admin_permissions` AFTER INSERT ON `tbl_sections`
+ FOR EACH ROW BEGIN
+
+INSERT INTO tbl_role_rights(rrt_rol_idfk,rrt_sec_idfk,rrt_rit_idfk)
+SELECT 1,  NEW.sec_id, rit_id 
+FROM tbl_rights;
+
+END
+*/ 
+
+        //SANI: Create table tbl_rights
+        if(!Schema::hasTable('tbl_rights'))
+        {
+            Schema::create('tbl_rights', function(Blueprint $table)
+            {
+                $table->integer('rit_id', true);
+                $table->string('rit_name');
+                $table->boolean('rit_is_mandatory')->default(0);
+                $table->timestamp('rit_created_at')->nullable();
+                $table->timestamp('rit_updated_at')->nullable();
+                $table->timestamp('rit_deleted_at')->nullable();
+
+                $table->engine = 'InnoDB';
+            });
+        }
+
+  
+            //SANI: Create table tbl_roles
+            if(!Schema::hasTable('tbl_roles'))
+            {
+                Schema::create('tbl_roles', function(Blueprint $table)
+                {
+                    $table->integer('rol_id', true);
+                    $table->string('rol_name');
+                    $table->boolean('rol_is_mandatory')->default(0);
+                    $table->timestamp('created_at')->nullable();
+                    $table->timestamp('updated_at')->nullable();
+                    $table->timestamp('deleted_at')->nullable();
+
+                    $table->engine = 'InnoDB';
+                });
+            }
+
+            if(!Schema::hasTable('tbl_role_rights'))
+            {
+                Schema::create('tbl_role_rights', function(Blueprint $table)
+                {
+                    //$table->dropForeign(['tbl_role_rights_ibfk_1']);
+                    //$table->dropForeign(['tbl_role_rights_ibfk_2']);
+                    //$table->dropForeign(['tbl_role_rights_ibfk_3']);
+                    $table->integer('rrt_id', true);
+                    $table->integer('rrt_rol_idfk')->index('rrt_rol_idfk');
+                    $table->integer('rrt_sec_idfk')->index('rrt_sec_idfk');
+                    $table->integer('rrt_rit_idfk')->index('rrt_rit_idfk');
+
+                    $table->foreign('rrt_rit_idfk', 'role_'.time())->references('rit_id')->on('tbl_rights')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    $table->foreign('rrt_rol_idfk', 'rights_'.time())->references('rol_id')->on('tbl_roles')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+                    $table->foreign('rrt_sec_idfk', 'sections_'.time())->references('sec_id')->on('tbl_sections')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+
+                    $table->engine = 'InnoDB';
+                });
+            }
+
+            //SANI: Create table tbl_users
+        if(!Schema::hasTable('tbl_users'))
+        {
+            Schema::create('tbl_users', function (Blueprint $table) 
+            {
+                $table->bigIncrements('usr_id');
+                $table->string('usr_name')->nullable();
+                $table->string('usr_email')->unique();
+                $table->timestamp('usr_email_verified_at')->nullable();
+                $table->string('usr_password')->nullable();
+                $table->string('usr_remember_token')->nullable();
+                $table->integer('usr_phone')->nullable();
+                $table->string('usr_image')->default("default.jpg");
+                $table->timestamp('usr_created_at')->nullable();
+                $table->integer('usr_created_by')->default(0);
+                $table->timestamp('usr_updated_at')->nullable();
+                $table->integer('usr_updated_by')->default(0);
+                $table->timestamp('usr_deleted_at')->nullable();
+                $table->integer('usr_deleted_by')->default(0);
+                $table->integer('usr_sortid')->default(1);
+                $table->tinyInteger('usr_status')->default(1);
+                $table->rememberToken();
+                $table->timestamps();
+                $table->integer('urs_rol_idfk')->index('urs_rol_idfk');
+                $table->boolean('usr_is_mandatory')->default(0);
+                //SANI: Foreign key
+                $table->foreign('urs_rol_idfk', 'user_role_'.time())->references('rol_id')->on('tbl_roles')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+
+                $table->engine = 'InnoDB';
+            });
+        }
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        
+        //SANI: Roll back using (php artisan migrate:rollback)
+        Schema::dropIfExists('tbl_role_rights');
+        Schema::dropIfExists('tbl_users');
+        //Schema::dropIfExists('migrations');
+        Schema::dropIfExists('tbl_roles');
+        Schema::dropIfExists('tbl_rights');
+        Schema::dropIfExists('tbl_sections');
+    }
+}
