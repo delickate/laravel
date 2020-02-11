@@ -16,3 +16,80 @@ browner12\helpers\HelperServiceProvider::class,
 #SANI: Step 3: Create helper
 
 C:\wamp64\www\Laravel\testing> php artisan make:helper global_helper
+
+
+###############################   OR ######################################
+Step 1) 
+===========================
+Create a new file in your app/Helpers directory name it as GlobalHelper.php 
+
+Step 2)
+===========================
+Add/create any function in GlobalHelper.php
+<?php
+function sani($inputArray, $is_die = false)
+{
+	if(isset($inputArray) && (is_array($inputArray) || is_object($inputArray))
+      )
+	{
+		echo "<pre>".print_r($inputArray)."</pre>";
+	}else{
+			echo $inputArray;
+	     }	
+
+	if($is_die)
+	{
+		die();
+	}     
+}
+?>
+
+
+Step 3)
+==========================
+Open command prompt and execute following command
+c:\wamp64\www\laravel\projectname>php artisan make:provider HelperServiceProvider
+
+Step 4)
+==========================
+Open file from app/provider/helperServiceProvider.php and write following line in it inside register function
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class HelperServiceProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        require_once app_path('Helpers/GlobalHelper.php');
+    }
+
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
+}
+?>
+
+
+Step 5)
+Open config/app.php file and add following line
+
+'providers' => [
+.......................
+........................
+'App\Providers\HelperServiceProvider',
+]
+
