@@ -1,0 +1,35 @@
+//SANI: Heirarchical fetch data from last table
+    A) District
+        B) Tehsil
+            C) Union Council 
+    public function functionInModelDistrict()
+    {
+        return $this->hasManyThrough(
+            'App\UNIONCOUNCIL', //C TABLE MODEL
+            'App\TEHSIL', //B TABLE MODEL 
+            'distict_id_fk', // Foreign key of A table in B table 
+            'tehsil_id', // Primary key of B
+            'district_id', // Primary key of A
+            'tehsil_id_fk' // Foriegn key of B in C
+        );
+    }
+    
+//SANI: Fetch data from other table linked with middle table
+    A) tbl_sections (sec_id (pk) )                C) tbl_rights (rit_id (pk)) 
+          \                                      /
+            B) tbl_section_options (spt_section_id (fk), spt_rights_id (fk))
+public function rights()
+    {
+        return $this->hasManyThrough(
+            'App\Right',
+            'App\Sectionoption',
+            'spt_section_id', // Foreign key on users table...
+            'rit_id', // Foreign key on posts table...
+            'sec_id', // Local key on countries table...
+            'spt_rights_id' // Local key on users table...
+        );
+
+
+    }
+
+    
